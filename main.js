@@ -1,18 +1,21 @@
-var enemy, ship;
-var laserTotal = 2, lasers = [];
-
-rightKey = false,
-leftKey  = false,
-upKey    = false,
-downKey  = false;
-
-enemyTotal = 5,
-enemies    = [],
-enemy_x    = 50,
-enemy_y    = -45,
-enemy_w    = 32,
-enemy_h    = 26,
-speed      = 3;
+var enemy,
+   	ship;
+var laserTotal = 2,
+   	lasers = [];
+var score = 0,
+	lives = 3,
+    alive = true;
+var rightKey = false,
+    leftKey  = false,
+	upKey    = false,
+	downKey  = false;
+var enemyTotal = 5,
+	enemies    = [],
+	enemy_x    = 50,
+	enemy_y    = -45,
+    enemy_w    = 32,
+    enemy_h    = 26,
+    speed      = 3;
 
 for (var i = 0; i < enemyTotal; i++) {
   enemies.push([enemy_x, enemy_y, enemy_w, enemy_h, speed]);
@@ -34,16 +37,18 @@ function clearCanvas() {
 }
 
 function drawShip() {
+  ship = ship_s;
   if      (rightKey) ship_x += 4;
   else if (leftKey) ship_x  -= 4;
   if      (upKey) ship_y    += 4;
-  else if (downKey) ship_y  -= 4;
+  else if (downKey) {
+	ship_y  -= 4;
+	ship = ship_a;
+  }
   if (ship_x <= 0) ship_x =0;
   if ((ship_x + ship_w) >= width) ship_x = width - ship_w;
   if (ship_y <= 0) ship_y =0;
   if ((ship_y + ship_h) >= height) ship_y = height - ship_h;
-//ctx.fillStyle = '#0f0';
-//ctx.fillRect(ship_x, ship_y, ship_w, ship_h);
   ctx.drawImage(ship, ship_x, ship_y);
 };
 
@@ -66,8 +71,7 @@ function moveEnemies() {
 function drawLasers() {
   if (lasers.length)
 	for (var i = 0; i < lasers.length; i++) {
-	  ctx.fillStyle = '#f00';
-	  ctx.fillRect(lasers[i][0],lasers[i][1],lasers[i][2],lasers[i][3])
+	  ctx.drawImage(double_shot, lasers[i][0] - 5, lasers[i][1]);
 	}
 }
 
@@ -86,20 +90,31 @@ function init () {
   ctx       = canvas.getContext('2d');
   enemy     = new Image();
   enemy.src = 'enemy.png';
-  ship      = new Image();
-  ship.src  = 'ship.png';
-  setInterval(gameLoop, 25);
+  ship_s      = new Image();
+  ship_s.src  = 'ship_s.png';
+  ship_a    = new Image();
+  ship_a.src = 'ship_a.png';
+  double_shot = new Image();
+  double_shot.src = 'doubel_shot.png';
+  // setInterval(gameLoop, 25);
   document.addEventListener('keydown', keyDown, false);
   document.addEventListener('keyUp'  , keyUp  , false);
+  gameLoop();
 }
 
 function gameLoop() {
   clearCanvas();
-  moveEnemies();
-  drawEnemies();
-  moveLasers();
-  drawLasers();
-  drawShip();
+  if (alive) {
+	hitTest();
+	shipCollision();
+	moveEnemies();
+	drawEnemies();
+	moveLasers();
+	drawLasers();
+	drawShip();
+  }
+  scoreTotal();
+  game = setTimeout(gameLoop, 1000 / 30);
 }
 
 function keyDown(e) {
@@ -119,4 +134,106 @@ function keyUp(e) {
   else if (e.keyCode == 38) downKey  = false;
 }
 
+function hitTest() {
+  var remove = false;
+  for (var i = 0; i < lasers.length; i++) {
+	for (var j = 0; j < enemies.length; j++) {
+	  if (lasers[i][1] <= (enemies[j][1] + enemies[j][3]) && lasers[i][0] >= enemies[j][0] && lasers[i][0] <= (enemies[j][0] + enemies[j][2])) {
+		remove = true;
+		enemies.splice(j,1);
+		score += 10;
+		enemies.push([Math.random() * 270 + 50, 45, enemy_w, enemy_h, speed]);
+	  }
+	}
+	if (remove == true) {
+	  lasers.splice(i,1);
+	  remove = false;
+	}
+  }
+}
+
+function shipCollision() {
+  var ship_xw = ship_x + ship_w,
+	  ship_yh = ship_y + ship_h;
+  for (var i = 0; i < enemies.length; i++) {
+	if (ship_x > enemies[i][0] && ship_x < enemies[i][0] + enemy_w && ship_y > enemies[i][1] && ship_y < enemies[i][1] + enemy_h) {
+	  checkLives();
+	}
+	if (ship_xw < enemies[i][0] + enemy_w && ship_xw > enemies[i][0] && ship_y > enemies[i][1] && ship_y < enemies[i][1] + enemy_h) {
+	  checkLives();
+	}
+	if (ship_yh > enemies[i][1] && ship_yh < enemies[i][1] + enemy_h && ship_x > enemies[i][0] && ship_x < enemies[i][0] + enemy_w) {
+	  checkLives();
+	}
+	if (ship_yh > enemies[i][1] && ship_yh < enemies[i][1] + enemy_h && ship_xw < enemies[i][0] + enemy_w && ship_xw > enemies[i][0]) {
+	  checkLives();
+	}
+  }
+}
+
+function checkLives() {
+  lives -= 1;
+  if (lives > 0) {
+	reset();
+  } else if (lives == 0) {
+	alive = false;
+  }
+}
+
+function reset() {
+  var enemy_reset_x = 50;
+  ship_x = (width / 2) - 25, ship_y = height - 75, ship_w = 36, ship_h = 30;
+  for (var i = 0; i < enemies.length; i++) {
+	enemies[i][0] = enemy_reset_x;
+	enemies[i][1] = -45;
+	enemy_reset_x = enemy_reset_x + enemy_w + 60;
+  }
+}
+
+function scoreTotal() {
+  if (!alive || enemies.length == 0) {
+	ctx.fillText('Game Over', 100, height / 2);
+	ctx.fillRect((width / 2) - 53, (height / 2) + 10,100,40);
+	ctx.fillStyle = '#000';
+	ctx.fillText('Continue?', 110, (height / 2) + 35);
+	canvas.addEventListener('click', continueButton, false);
+  }
+  ctx.font = 'bold 18px Arial';
+  ctx.fillStyle = '#fff';
+  ctx.fillText('Score: ', 190, 30);
+  ctx.fillText(score, 265, 30);
+  ctx.fillText('Lives:', 10, 30);
+  ctx.fillText(lives, 68, 30);
+}
+
+function continueButton(e) {
+  var cursorPos = getCursorPos(e);
+  if (cursorPos.x > (width / 2) - 53 && cursorPos.x < (width / 2) + 47 && cursorPos.y > (height / 2) + 10 && cursorPos.y < (height / 2) + 50) {
+	alive = true;
+	lives = 3;
+	reset();
+	canvas.removeEventListener('click', continueButton, false);
+  }
+}
+
+function getCursorPos(e) {
+  var x;
+  var y;
+  if (e.pageX || e.pageY) {
+	x = e.pageX;
+	y = e.pageY;
+  } else {
+	x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+	y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+  }
+  x -= canvas.offsetLeft;
+  y -= canvas.offsetTop;
+  var cursorPos = new cursorPosition(x, y);
+  return cursorPos;
+}
+
+function cursorPosition(x, y) {
+  this.x = x;
+  this.y = y;
+}
 window.onload = init;
