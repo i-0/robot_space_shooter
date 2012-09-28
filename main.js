@@ -6,7 +6,7 @@
  *
  * This can be considered a playground for game ideas and a small example of what can be done with canvas. In no way do I want to brag with my super duper uber canvas and js skills, I am a bloody rookie.
  *
- * Only thing to say: Have fun!
+ * Only one thing more to say: Have fun!
  *
  * Christoph Gierling,
  * Madrid, 28/09/2012
