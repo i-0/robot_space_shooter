@@ -4,6 +4,7 @@ body {
   border:1px dashed #ccc;
   background:#000;
 }
+
 canvas {
   display:block;
   margin:30px auto 0;
