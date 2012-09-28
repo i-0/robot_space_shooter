@@ -1,3 +1,30 @@
+/* 
+ * Until now the working title of this game is "Robot Space Shooter", why 'cause robots are cool said a good friend of mine =]
+ *
+ * Based on a tutorial by Mike Thomas @ atomicrobotdesign.com
+ * The sprites used are from http://www.widgetworx.com/widgetworx/portfolio/spritelib.html licensed under  Common Public License, credits go to Ari Feldman. I've croped and changed the background of the sprites I've used.
+ *
+ * This can be considered a playground for game ideas and a small example of what can be done with canvas. In no way do I want to brag with my super duper uber canvas and js skills, I am a bloody rookie.
+ *
+ * Only thing to say: Have fun!
+ *
+ * Christoph Gierling,
+ * Madrid, 28/09/2012
+ *
+ * TODO:
+ * 		Automatic resolve all magic numbers in the code
+ * 		Move magic numbers into named constants
+ * 		Refine collision model
+ * 		Enemy AI model "can" be improved :D
+ * 		More Sprites, more "enemies" the more "honor"
+ * 		Lateral animations (booster or inclination of the ship)
+ * 		Power-Ups
+ * 		A background would be nice
+ * 			parallax scrolling - CSS?
+ * 			Collision with "walls"
+ * 		...
+ * 		Web sockets and multilayer sounds cool
+ */
 var enemy,
    	ship;
 var laserTotal = 2,
@@ -25,7 +52,7 @@ for (var i = 0; i < enemyTotal; i++) {
 var canvas,
     ctx,
     width  = 300,
-    height = 300,
+    height = 300
 
     ship_x = (width / 2) - 25,
     ship_y = height - 75,
