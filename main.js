@@ -1,4 +1,5 @@
 var enemy, ship;
+var laserTotal = 2, lasers = [];
 
 rightKey = false,
 leftKey  = false,
@@ -62,6 +63,24 @@ function moveEnemies() {
   }
 }
 
+function drawLasers() {
+  if (lasers.length)
+	for (var i = 0; i < lasers.length; i++) {
+	  ctx.fillStyle = '#f00';
+	  ctx.fillRect(lasers[i][0],lasers[i][1],lasers[i][2],lasers[i][3])
+	}
+}
+
+function moveLasers() {
+  for (var i = 0; i < lasers.length; i++) {
+	if (lasers[i][1] > -11) {
+	  lasers[i][1] -= 10;
+	} else if (lasers[i][1] < -10) {
+	  lasers.splice(i, 1);
+	}
+  }
+}
+
 function init () {
   canvas    = document.getElementById('canvas');
   ctx       = canvas.getContext('2d');
@@ -78,6 +97,8 @@ function gameLoop() {
   clearCanvas();
   moveEnemies();
   drawEnemies();
+  moveLasers();
+  drawLasers();
   drawShip();
 }
 
@@ -86,6 +107,9 @@ function keyDown(e) {
   else if (e.keyCode == 37) leftKey  = true;
   if      (e.keyCode == 40) upKey    = true;
   else if (e.keyCode == 38) downKey  = true;
+  if 	  (e.keyCode == 88 && lasers.length <= laserTotal) {
+	lasers.push([ship_x + 13, ship_y - 10, 4, 20]);
+  };
 }
 
 function keyUp(e) {
