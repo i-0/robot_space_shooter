@@ -122,7 +122,7 @@ function init () {
   ship_a    = new Image();
   ship_a.src = 'ship_a.png';
   double_shot = new Image();
-  double_shot.src = 'doubel_shot.png';
+  double_shot.src = 'double_shot.png';
   // setInterval(gameLoop, 25);
   document.addEventListener('keydown', keyDown, false);
   document.addEventListener('keyUp'  , keyUp  , false);
