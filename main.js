@@ -5,6 +5,7 @@
  * The sprites used are from http://www.widgetworx.com/widgetworx/portfolio/spritelib.html licensed under  Common Public License, credits go to Ari Feldman. I've croped and changed the background of the sprites I've used.
  *
  * This can be considered a playground for game ideas and a small example of what can be done with canvas. In no way do I want to brag with my super duper uber canvas and js skills, I am a bloody rookie.
+ * At the moment works best in Opera. The Arrow keys move the ship and x fires the weapons.
  *
  * Only one thing more to say: Have fun!
  *
